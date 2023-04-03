@@ -29,7 +29,6 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
         reload();
     }
 
-
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -68,7 +67,16 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
                 .setTls(preferences.getBoolean("enable_tls", true))
                 .setConnHash("")
                 .setUserAgent(preferences.getString("user_agent", "WsProxy"));
-        tcp2ws.start(Integer.parseInt(preferences.getString("port", "42069")));
+        try {
+            int port = Integer.parseInt(preferences.getString("port", "42069"));
+            if (port > 65535 || port < 1) {
+                throw new IllegalArgumentException(getString(R.string.invalid_port_number));
+            }
+            tcp2ws.start(port);
+        } catch (Exception e) {
+            postError(e.getLocalizedMessage());
+            stopSelf();
+        }
         return START_STICKY;
     }
 
@@ -79,7 +87,30 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
                 .setConnHash("")
                 .setUserAgent(preferences.getString("user_agent", "WsProxy"));
         Log.e("Test", preferences.getString("port", "42069"));
-        tcp2ws.start(Integer.parseInt(preferences.getString("port", "42069")));
+        try {
+            int port = Integer.parseInt(preferences.getString("port", "42069"));
+            if (port > 65535 || port < 1) {
+                throw new IllegalArgumentException(getString(R.string.invalid_port_number));
+            }
+            tcp2ws.start(port);
+        } catch (Exception e) {
+            postError(e.getLocalizedMessage());
+            stopSelf();
+        }
+    }
+
+    public void postError(String error) {
+        Notification notification =
+                new NotificationCompat.Builder(this, CHANNEL_WS_SERVICE)
+                        .setContentTitle(getText(R.string.failed_to_start_proxy))
+                        .setContentText(error)
+                        .setSmallIcon(R.drawable.baseline_settings_ethernet_24)
+                        .setColor(ContextCompat.getColor(this, R.color.ic_launcher_background))
+                        .setOngoing(true)
+                        .setOnlyAlertOnce(true)
+                        .build();
+
+        startForeground(ONGOING_NOTIFICATION_ID, notification);
     }
 
     @Override

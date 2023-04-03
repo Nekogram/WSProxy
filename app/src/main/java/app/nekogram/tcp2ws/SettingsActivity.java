@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
 
@@ -50,13 +49,14 @@ public class SettingsActivity extends MaterialActivity {
     }
 
     @SuppressWarnings({"ConstantConditions", "deprecation"})
-    public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener {
+    public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
         private SettingsActivity mActivity;
 
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
+            findPreference("port").setOnPreferenceChangeListener(this);
             findPreference("connect").setOnPreferenceClickListener(this);
             findPreference("notification_permission").setOnPreferenceClickListener(this);
 
@@ -104,6 +104,19 @@ public class SettingsActivity extends MaterialActivity {
             } else if ("notification_permission".equals(preference.getKey())) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
+                }
+            }
+            return true;
+        }
+
+        @Override
+        public boolean onPreferenceChange(@NonNull Preference preference, Object newValue) {
+            if ("port".equals(preference.getKey())) {
+                try {
+                    int port = Integer.parseInt((String) newValue);
+                    return port <= 65535 && port >= 1;
+                } catch (Exception e) {
+                    return false;
                 }
             }
             return true;

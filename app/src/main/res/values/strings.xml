@@ -6,6 +6,8 @@
     <string name="notification_message">Tap to configure</string>
 
     <string name="notification_permission_not_granted">Notification permission not granted</string>
+    <string name="failed_to_start_proxy">Failed to start proxy</string>
+    <string name="invalid_port_number">Invalid port number</string>
 
     <string name="tutorial">Tutorial</string>
     <string name="how_to_setup_a_domain">How to set-up a domain to use?</string>
