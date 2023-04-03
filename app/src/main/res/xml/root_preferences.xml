@@ -1,0 +1,53 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <Preference
+        android:key="notification_permission"
+        android:title="notification_permission_not_granted"
+        app:allowDividerBelow="true" />
+
+
+    <com.takisoft.preferencex.PreferenceCategory android:title="@string/tutorial">
+
+        <Preference
+            android:key="how_to_setup_a_domain"
+            android:title="@string/how_to_setup_a_domain"
+            app:allowDividerBelow="true" />
+
+    </com.takisoft.preferencex.PreferenceCategory>
+
+    <com.takisoft.preferencex.PreferenceCategory
+        android:title="@string/settings"
+        app:allowDividerAbove="true">
+
+        <com.takisoft.preferencex.EditTextPreference
+            android:key="domain"
+            android:title="@string/domain"
+            android:defaultValue="example.com"
+            app:useSimpleSummaryProvider="true" />
+
+        <rikka.material.preference.MaterialSwitchPreference
+            android:key="enable_tls"
+            android:defaultValue="true"
+            android:title="@string/enable_tls" />
+
+        <com.takisoft.preferencex.EditTextPreference
+            android:key="user_agent"
+            android:title="@string/user_agent"
+            app:useSimpleSummaryProvider="true" />
+
+        <com.takisoft.preferencex.EditTextPreference
+            android:key="port"
+            android:title="@string/local_port"
+            android:defaultValue="42069"
+            android:inputType="numberDecimal"
+            app:useSimpleSummaryProvider="true" />
+
+    </com.takisoft.preferencex.PreferenceCategory>
+
+    <Preference
+        android:key="connect"
+        android:title="@string/connect"
+        app:allowDividerAbove="true" />
+
+</PreferenceScreen>

@@ -1,0 +1,9 @@
+<resources>
+
+    <style name="Theme.WSProxy" parent="Theme.Material3.Light.WsProxy">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+</resources>
