@@ -3,11 +3,11 @@
 
     <Preference
         android:key="notification_permission"
-        android:title="notification_permission_not_granted"
-        app:allowDividerBelow="true" />
+        android:title="@string/notification_permission_not_granted" />
 
-
-    <com.takisoft.preferencex.PreferenceCategory android:title="@string/tutorial">
+    <com.takisoft.preferencex.PreferenceCategory
+        android:title="@string/tutorial"
+        app:allowDividerAbove="true">
 
         <Preference
             android:key="how_to_setup_a_domain"
