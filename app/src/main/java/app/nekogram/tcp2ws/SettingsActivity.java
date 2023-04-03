@@ -78,7 +78,7 @@ public class SettingsActivity extends MaterialActivity {
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions[0].equals(Manifest.permission.POST_NOTIFICATIONS)) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions.length > 0 && permissions[0].equals(Manifest.permission.POST_NOTIFICATIONS)) {
                 startWsService();
                 findPreference("notification_permission").setVisible(false);
             }
