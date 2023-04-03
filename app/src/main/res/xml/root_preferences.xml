@@ -12,7 +12,11 @@
         <Preference
             android:key="how_to_setup_a_domain"
             android:title="@string/how_to_setup_a_domain"
-            app:allowDividerBelow="true" />
+            app:allowDividerBelow="true">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://gitlab.com/Nekogram/wsproxy/-/blob/main/setup.md" />
+        </Preference>
 
     </com.takisoft.preferencex.PreferenceCategory>
 
