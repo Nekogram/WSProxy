@@ -67,6 +67,12 @@ public class SettingsActivity extends MaterialActivity {
                 findPreference("notification_permission").setVisible(false);
                 startWsService();
             }
+            try {
+                mActivity.getPackageManager().getApplicationInfo("tw.nekomimi.nekogram", 0);
+                findPreference("install_nekogram").setVisible(false);
+            } catch (PackageManager.NameNotFoundException e) {
+                findPreference("install_nekogram").setVisible(true);
+            }
         }
 
         @Override

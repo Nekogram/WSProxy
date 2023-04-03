@@ -54,4 +54,14 @@
         android:title="@string/connect"
         app:allowDividerAbove="true" />
 
+    <Preference
+        android:key="install_nekogram"
+        android:title="@string/get_nekogram"
+        android:summary="@string/get_nekogram_summary"
+        app:allowDividerAbove="true">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://nekogram.app" />
+    </Preference>
+
 </PreferenceScreen>
