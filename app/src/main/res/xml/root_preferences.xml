@@ -15,7 +15,7 @@
             app:allowDividerBelow="true">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://gitlab.com/Nekogram/wsproxy/-/blob/main/setup.md" />
+                android:data="https://gitlab.com/Nekogram/wsproxy/-/blob/main/tutorial/setup.md" />
         </Preference>
 
     </com.takisoft.preferencex.PreferenceCategory>
