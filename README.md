@@ -6,6 +6,10 @@ A simple proxy software made for Telegram, no servers required. Works well for a
 
 Check [tutorial](./tutorial/setup.md).
 
+## Download
+
+[Telegram channel](https://t.me/WSProxy)
+
 ## How it works?
 
 ```
