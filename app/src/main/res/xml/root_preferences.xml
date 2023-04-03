@@ -6,12 +6,34 @@
         android:title="@string/notification_permission_not_granted" />
 
     <com.takisoft.preferencex.PreferenceCategory
+        android:title="@string/status"
+        app:allowDividerAbove="true">
+
+        <Preference
+            android:key="status"
+            android:summary="@string/stopped" />
+        <Preference
+            android:key="start"
+            android:icon="@drawable/round_play_arrow_24"
+            android:title="@string/start" />
+        <Preference
+            android:key="stop"
+            android:icon="@drawable/round_stop_24"
+            android:title="@string/stop" />
+        <Preference
+            android:key="restart"
+            android:icon="@drawable/round_autorenew_24"
+            android:title="@string/restart" />
+    </com.takisoft.preferencex.PreferenceCategory>
+
+    <com.takisoft.preferencex.PreferenceCategory
         android:title="@string/tutorial"
         app:allowDividerAbove="true">
 
         <Preference
             android:key="how_to_setup_a_domain"
             android:title="@string/how_to_setup_a_domain"
+            android:icon="@drawable/round_question_mark_24"
             app:allowDividerBelow="true">
             <intent
                 android:action="android.intent.action.VIEW"
@@ -27,23 +49,27 @@
         <com.takisoft.preferencex.EditTextPreference
             android:key="domain"
             android:title="@string/domain"
+            android:icon="@drawable/round_dns_24"
             android:defaultValue="example.com"
             app:useSimpleSummaryProvider="true" />
 
         <rikka.material.preference.MaterialSwitchPreference
             android:key="enable_tls"
             android:defaultValue="true"
+            android:icon="@drawable/round_https_24"
             android:title="@string/enable_tls" />
 
         <com.takisoft.preferencex.EditTextPreference
             android:key="user_agent"
             android:title="@string/user_agent"
+            android:icon="@drawable/round_perm_identity_24"
             app:useSimpleSummaryProvider="true" />
 
         <com.takisoft.preferencex.EditTextPreference
             android:key="port"
             android:title="@string/local_port"
             android:defaultValue="42069"
+            android:icon="@drawable/round_import_export_24"
             android:inputType="numberDecimal"
             app:useSimpleSummaryProvider="true" />
 
@@ -52,6 +78,7 @@
     <Preference
         android:key="connect"
         android:title="@string/connect"
+        android:icon="@drawable/round_settings_ethernet_24"
         app:allowDividerAbove="true" />
 
     <Preference

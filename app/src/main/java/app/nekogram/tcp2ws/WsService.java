@@ -6,8 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.core.app.NotificationChannelCompat;
 import androidx.core.app.NotificationCompat;
@@ -21,17 +21,25 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
     private static final int ONGOING_NOTIFICATION_ID = 6356;
     private static final String CHANNEL_WS_SERVICE = "ws_service";
 
+    private final WsBinder binder = new WsBinder();
     private SharedPreferences preferences;
     private tcp2wsServer tcp2ws;
+    private boolean running;
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         reload();
     }
 
+    public class WsBinder extends Binder {
+        WsService getService() {
+            return WsService.this;
+        }
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return binder;
     }
 
     @Override
@@ -51,7 +59,7 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
                 new NotificationCompat.Builder(this, CHANNEL_WS_SERVICE)
                         .setContentTitle(getText(R.string.notification_title))
                         .setContentText(getText(R.string.notification_message))
-                        .setSmallIcon(R.drawable.baseline_settings_ethernet_24)
+                        .setSmallIcon(R.drawable.round_settings_ethernet_24)
                         .setContentIntent(pendingIntent)
                         .setColor(ContextCompat.getColor(this, R.color.ic_launcher_background))
                         .setOngoing(true)
@@ -73,9 +81,10 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
                 throw new IllegalArgumentException(getString(R.string.invalid_port_number));
             }
             tcp2ws.start(port);
+            running = true;
         } catch (Exception e) {
             postError(e.getLocalizedMessage());
-            stopSelf();
+            stop();
         }
         return START_STICKY;
     }
@@ -86,7 +95,6 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
         tcp2ws = new tcp2wsServer().setTls(preferences.getBoolean("enable_tls", true))
                 .setConnHash("")
                 .setUserAgent(preferences.getString("user_agent", "WsProxy"));
-        Log.e("Test", preferences.getString("port", "42069"));
         try {
             int port = Integer.parseInt(preferences.getString("port", "42069"));
             if (port > 65535 || port < 1) {
@@ -95,16 +103,27 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
             tcp2ws.start(port);
         } catch (Exception e) {
             postError(e.getLocalizedMessage());
-            stopSelf();
+            stop();
         }
     }
 
-    public void postError(String error) {
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void stop() {
+        tcp2ws.stop();
+        stopForeground(true);
+        stopSelf();
+        running = false;
+    }
+
+    private void postError(String error) {
         Notification notification =
                 new NotificationCompat.Builder(this, CHANNEL_WS_SERVICE)
                         .setContentTitle(getText(R.string.failed_to_start_proxy))
                         .setContentText(error)
-                        .setSmallIcon(R.drawable.baseline_settings_ethernet_24)
+                        .setSmallIcon(R.drawable.round_settings_ethernet_24)
                         .setColor(ContextCompat.getColor(this, R.color.ic_launcher_background))
                         .setOngoing(true)
                         .setOnlyAlertOnce(true)
@@ -116,6 +135,7 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
     @Override
     public void onDestroy() {
         tcp2ws.stop();
+        running = false;
         super.onDestroy();
     }
 }

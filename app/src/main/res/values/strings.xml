@@ -14,6 +14,12 @@
     <string name="get_nekogram">Get Nekogram</string>
     <string name="get_nekogram_summary">Nekogram is an open-source third-party Telegram client.</string>
 
+    <string name="status">Status</string>
+    <string name="running">Running</string>
+    <string name="stopped">Stopped</string>
+    <string name="restart">Restart</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="settings">Settings</string>
     <string name="domain">Domain</string>
     <string name="local_port">Local port</string>

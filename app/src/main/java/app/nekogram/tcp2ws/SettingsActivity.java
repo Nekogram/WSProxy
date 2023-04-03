@@ -1,14 +1,17 @@
 package app.nekogram.tcp2ws;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Window;
 
 import androidx.annotation.NonNull;
@@ -51,12 +54,30 @@ public class SettingsActivity extends MaterialActivity {
     @SuppressWarnings({"ConstantConditions", "deprecation"})
     public static class SettingsFragment extends PreferenceFragmentCompat implements Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
         private SettingsActivity mActivity;
+        private WsService mService;
+        private boolean mBound = false;
+        private final ServiceConnection connection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className, IBinder service) {
+                WsService.WsBinder binder = (WsService.WsBinder) service;
+                mService = binder.getService();
+                mBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                mBound = false;
+            }
+        };
 
         @Override
         public void onCreatePreferencesFix(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
 
             findPreference("port").setOnPreferenceChangeListener(this);
+            findPreference("start").setOnPreferenceClickListener(this);
+            findPreference("stop").setOnPreferenceClickListener(this);
+            findPreference("restart").setOnPreferenceClickListener(this);
             findPreference("connect").setOnPreferenceClickListener(this);
             findPreference("notification_permission").setOnPreferenceClickListener(this);
 
@@ -65,27 +86,60 @@ public class SettingsActivity extends MaterialActivity {
                 requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
             } else {
                 findPreference("notification_permission").setVisible(false);
-                startWsService();
             }
+
             try {
                 mActivity.getPackageManager().getApplicationInfo("tw.nekomimi.nekogram", 0);
                 findPreference("install_nekogram").setVisible(false);
             } catch (PackageManager.NameNotFoundException e) {
                 findPreference("install_nekogram").setVisible(true);
             }
+
+            startWsService();
         }
 
         @Override
         public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && permissions.length > 0 && permissions[0].equals(Manifest.permission.POST_NOTIFICATIONS)) {
-                startWsService();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && mActivity.checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 findPreference("notification_permission").setVisible(false);
             }
         }
 
         private void startWsService() {
-            ContextCompat.startForegroundService(mActivity, new Intent(mActivity, WsService.class));
+            if (mService == null || !mService.isRunning()) {
+                ContextCompat.startForegroundService(mActivity, new Intent(mActivity, WsService.class));
+            }
+            findPreference("stop").setVisible(true);
+            findPreference("restart").setVisible(true);
+            findPreference("start").setVisible(false);
+            findPreference("connect").setEnabled(true);
+            findPreference("status").setSummary(getString(R.string.running));
+        }
+
+        private void stopWsService() {
+            findPreference("stop").setVisible(false);
+            findPreference("restart").setVisible(false);
+            findPreference("start").setVisible(true);
+            findPreference("connect").setEnabled(false);
+            findPreference("status").setSummary(getString(R.string.stopped));
+            if (mService != null) {
+                mService.stop();
+            }
+        }
+
+        @Override
+        public void onStart() {
+            super.onStart();
+            Intent intent = new Intent(mActivity, WsService.class);
+            mActivity.bindService(intent, connection, Context.BIND_AUTO_CREATE);
+        }
+
+        @Override
+        public void onStop() {
+            super.onStop();
+            mActivity.unbindService(connection);
+            mBound = false;
         }
 
         @Override
@@ -111,6 +165,14 @@ public class SettingsActivity extends MaterialActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, 0);
                 }
+            } else if ("stop".equals(preference.getKey())) {
+                stopWsService();
+            } else if ("restart".equals(preference.getKey())) {
+                if (mService != null) {
+                    mService.reload();
+                }
+            } else if ("start".equals(preference.getKey())) {
+                startWsService();
             }
             return true;
         }
