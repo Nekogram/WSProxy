@@ -15,15 +15,13 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-import org.tcp2ws.tcp2wsServer;
-
 public class WsService extends Service implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final int ONGOING_NOTIFICATION_ID = 6356;
     private static final String CHANNEL_WS_SERVICE = "ws_service";
 
     private final WsBinder binder = new WsBinder();
     private SharedPreferences preferences;
-    private tcp2wsServer tcp2ws;
+    private Tcp2WsServer tcp2ws;
     private boolean running;
 
     @Override
@@ -70,11 +68,11 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
 
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         preferences.registerOnSharedPreferenceChangeListener(this);
-        tcp2wsServer.setCdnDomain(preferences.getString("domain", "example.com"));
-        tcp2ws = new tcp2wsServer()
-                .setTls(preferences.getBoolean("enable_tls", true))
-                .setConnHash("")
-                .setUserAgent(preferences.getString("user_agent", "WsProxy"));
+        Tcp2WsServer.setCdnDomain(preferences.getString("domain", "example.com"));
+        Tcp2WsServer.setTls(preferences.getBoolean("enable_tls", true));
+        Tcp2WsServer.setConnHash("");
+        Tcp2WsServer.setUserAgent(preferences.getString("user_agent", "WsProxy"));
+        tcp2ws = new Tcp2WsServer();
         try {
             int port = Integer.parseInt(preferences.getString("port", "42069"));
             if (port > 65535 || port < 1) {
@@ -91,10 +89,11 @@ public class WsService extends Service implements SharedPreferences.OnSharedPref
 
     public void reload() {
         tcp2ws.stop();
-        tcp2wsServer.setCdnDomain(preferences.getString("domain", "example.com"));
-        tcp2ws = new tcp2wsServer().setTls(preferences.getBoolean("enable_tls", true))
-                .setConnHash("")
-                .setUserAgent(preferences.getString("user_agent", "WsProxy"));
+        Tcp2WsServer.setCdnDomain(preferences.getString("domain", "example.com"));
+        Tcp2WsServer.setTls(preferences.getBoolean("enable_tls", true));
+        Tcp2WsServer.setConnHash("");
+        Tcp2WsServer.setUserAgent(preferences.getString("user_agent", "WsProxy"));
+        tcp2ws = new Tcp2WsServer();
         try {
             int port = Integer.parseInt(preferences.getString("port", "42069"));
             if (port > 65535 || port < 1) {

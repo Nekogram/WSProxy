@@ -24,12 +24,18 @@ materialThemeBuilder {
 
 android {
     namespace 'app.nekogram.tcp2ws'
-    compileSdk 33
+    compileSdk 34
+
+    packagingOptions {
+        resources {
+            excludes += '**'
+        }
+    }
 
     defaultConfig {
         applicationId "app.nekogram.tcp2ws"
         minSdk 21
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
     }
@@ -46,8 +52,8 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
+    applicationVariants.configureEach { variant ->
+        variant.outputs.configureEach { output ->
             outputFileName = "WSProxy-${defaultConfig.versionName}-${defaultConfig.versionCode}.apk"
         }
     }
@@ -55,14 +61,12 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.preference:preference:1.2.1'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'com.takisoft.preferencex:preferencex:1.1.0'
 
-    implementation 'app.nekogram.tcp2ws:tcp2ws:1.2.6'
-    implementation 'com.neovisionaries:nv-websocket-client:2.14'
+    implementation 'app.nekogram.tcp2ws:tcp2ws:2.0.0'
 
-    implementation 'dev.rikka.rikkax.compatibility:compatibility:2.0.0'
     implementation 'dev.rikka.rikkax.core:core:1.4.1'
     implementation 'dev.rikka.rikkax.material:material:2.7.0'
     implementation 'dev.rikka.rikkax.material:material-preference:2.0.0'
@@ -71,6 +75,6 @@ dependencies {
     implementation 'dev.rikka.rikkax.widget:borderview:1.1.0'
 }
 
-configurations.all {
+configurations.configureEach {
     exclude group: 'dev.rikka.rikkax.appcompat', module: 'appcompat'
 }

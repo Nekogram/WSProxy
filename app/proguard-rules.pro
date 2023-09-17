@@ -35,3 +35,8 @@
 -overloadaggressively
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+
+-dontwarn org.conscrypt.BufferAllocator
+-dontwarn org.conscrypt.Conscrypt
+-dontwarn org.conscrypt.HandshakeListener
+-dontwarn reactor.blockhound.integration.BlockHoundIntegration
